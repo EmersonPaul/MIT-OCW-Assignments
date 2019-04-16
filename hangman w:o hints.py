@@ -140,6 +140,7 @@ def hangman(secret_word):
     vowels = 'aeiou' # Used to check for vowels and consonants
     unique_letter = [] # Stores unique letters to be used to be used for score later
     warnings_used = False # Used later if all warnings are used
+    # The loop to find all unique letters to add in unique_letters list
     for each_letter in range(len(secret_word)):
         current_letter = secret_word[each_letter] # Stores letter from the current index of secret_word
         letter_counter = 0 # Reset the amount of multiple same letters found
