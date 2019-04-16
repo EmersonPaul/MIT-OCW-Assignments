@@ -80,12 +80,13 @@ def get_guessed_word(secret_word, letters_guessed):
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     combined_letters = []
+    # same looping mechanism inside the is_word_guessed() function
     for a_letter in range(len(secret_word)):
         if secret_word[a_letter] in letters_guessed:
             combined_letters.append(secret_word[a_letter])
         else:
             combined_letters.append('_ ')
-    combined_letters = "".join(combined_letters)
+    combined_letters = "".join(combined_letters) # Turns list of letters to a string
     return combined_letters
 
 
@@ -97,11 +98,12 @@ def get_available_letters(letters_guessed):
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     lower_case_letters = string.ascii_lowercase
-    lower_case_letters = list(lower_case_letters)
+    lower_case_letters = list(lower_case_letters) # Converts ASCII lowercase letters(a string) to a list
+    # Loop through the list of guessed letters and compare if they have been used in available letters
     for each_letter in range(len(letters_guessed)):
         if letters_guessed[each_letter] in lower_case_letters:
-            lower_case_letters.remove(letters_guessed[each_letter])
-    lower_case_letters = "".join(lower_case_letters)
+            lower_case_letters.remove(letters_guessed[each_letter]) # Remove letter if it is in letters_guessed list
+    lower_case_letters = "".join(lower_case_letters) # Converts back to string 
     return lower_case_letters
         
 
