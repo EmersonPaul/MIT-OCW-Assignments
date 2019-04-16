@@ -102,7 +102,7 @@ def get_available_letters(letters_guessed):
     # Loop through the list of guessed letters and compare if they have been used in available letters
     for each_letter in range(len(letters_guessed)):
         if letters_guessed[each_letter] in lower_case_letters:
-            lower_case_letters.remove(letters_guessed[each_letter]) # Remove letter if it is in letters_guessed list
+            lower_case_letters.remove(letters_guessed[each_letter]) # Remove guessed letter in alphabet list
     lower_case_letters = "".join(lower_case_letters) # Converts back to string 
     return lower_case_letters
         
@@ -135,20 +135,19 @@ def hangman(secret_word):
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     guesses = 6
     warning = 3    
-    letters_guessed = []
+    letters_guessed = [] # Empty list of guessed letters
     has_guessed = False
     vowels = 'aeiou' # Used to check for vowels and consonants
     unique_letter = [] # Stores unique letters to be used to be used for score later
-    checker_index = 0 # Index of the loop that checks if letters are unique
-    warnings_used = False
+    warnings_used = False # Used later if all warnings are used
     for each_letter in range(len(secret_word)):
-        current_letter = secret_word[each_letter] # Stores letter from the current index of 'secret_word'
+        current_letter = secret_word[each_letter] # Stores letter from the current index of secret_word
         letter_counter = 0 # Reset the amount of multiple same letters found
         for checker_index in range(len(secret_word)):
             if current_letter == secret_word[checker_index]:
-                letter_counter += 1
+                letter_counter += 1 # Counts if a letter appears multiple times in the word (if yes, it is not unique)
         if letter_counter == 1:
-            unique_letter.append(current_letter)     
+            unique_letter.append(current_letter) # Adds the letter if it doesn't appear more than 1 times 
 
     print('Welcome to the game Hangman!')
     print('I am thinking of a word that is', len(secret_word), 'letters long.')
@@ -192,12 +191,13 @@ def hangman(secret_word):
         # Checks if guessed letters are in the secret word
         has_guessed = is_word_guessed(secret_word, letters_guessed)
         if has_guessed == True:
-            break
+            break # stops the loop if user has guessed all letters
 
     if has_guessed == True:
         print('Congratulations, you won!')
         print('Your total score for this game is:', len(unique_letter) * guesses)
     else:
+        print('-------------')
         print('Sorry, you ran out of guesses! The word was', '\'' + secret_word + '\'')    
 
 
