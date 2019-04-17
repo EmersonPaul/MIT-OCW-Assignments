@@ -252,11 +252,13 @@ def show_possible_matches(my_word):
     hint_words = []
     matched = False
     print(len(wordlist))
+    # Loop through wordlist to check if the words match with the length and letters of my_word
     for a_word in range(len(wordlist)):
         matched = match_with_gaps(my_word, wordlist[a_word])
         if matched == True:
             hint_words.append(wordlist[a_word])
         matched = False
+    # Conditional statement used to determine if hint_words have been found
     if len(hint_words) > 0:
         print(" ".join(hint_words))
     else:
@@ -338,6 +340,7 @@ def hangman_with_hints(secret_word):
         elif letter_guess == '*':
             guessed_word_length = len(guessed_word.replace(' ',''))
             guessed_word_character = len(guessed_word.replace('_ ',''))
+            # Prevents user from using hints early in the game. Also prevents showing of all words
             if abs(guessed_word_length - guessed_word_character) < guessed_word_length - 1:
                 print(show_possible_matches(guessed_word), 'words')
             else:                
