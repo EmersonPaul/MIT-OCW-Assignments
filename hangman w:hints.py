@@ -147,7 +147,7 @@ def hangman(secret_word):
             if current_letter == secret_word[checker_index]:
                 letter_counter += 1
         if letter_counter == 1:
-            unique_letter.append(current_letter) # Store current_letter if it only appears 1 times 
+            unique_letter.append(current_letter) # Store current_letter value if it only appears 1 times 
 
     print('Welcome to the game Hangman!')
     print('I am thinking of a word that is', len(secret_word), 'letters long.')
