@@ -231,9 +231,8 @@ def is_valid_word(word, hand, word_list):
     # Use deep copy to actually make a copy instead of only referencing to 
     # same dictionary of hand variable(dictionary)
     hand_copy = copy.deepcopy(hand)
-    possible_words = 0   
-
     used_wildcard = lowercase_word.find('*')
+    
     # Cheks if '*' has been used. If used_wildcard's value isn't -1
     if used_wildcard >= 0:
         # Loop through the letters in VOWELS to check if there are possible valid words
@@ -243,11 +242,7 @@ def is_valid_word(word, hand, word_list):
             # and store it in test_word
             test_word = lowercase_word.replace(lowercase_word[used_wildcard], i)
             if test_word in word_list:
-                possible_words += 1
-                
-        # Checks if any possible words exist from those vowels
-        if possible_words > 0:
-            return True
+                return True
         else:
             return False
                   
