@@ -17,7 +17,7 @@ CONSONANTS = 'bcdfghjklmnpqrstvwxyz'
 HAND_SIZE = 7
 
 SCRABBLE_LETTER_VALUES = {
-    'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
+    '*':0,'a': 1, 'b': 3, 'c': 3, 'd': 2, 'e': 1, 'f': 4, 'g': 2, 'h': 4, 'i': 1, 'j': 8, 'k': 5, 'l': 1, 'm': 3, 'n': 1, 'o': 1, 'p': 3, 'q': 10, 'r': 1, 's': 1, 't': 1, 'u': 1, 'v': 4, 'w': 4, 'x': 8, 'y': 4, 'z': 10
 }
 
 # -----------------------------------
@@ -154,15 +154,18 @@ def deal_hand(n):
     """
     
     hand={}
-    num_vowels = int(math.ceil(n / 3))
+    num_vowels = int(math.ceil(n / 3)) - 1
 
     for i in range(num_vowels):
         x = random.choice(VOWELS)
         hand[x] = hand.get(x, 0) + 1
     
-    for i in range(num_vowels, n):    
+    for i in range(num_vowels + 1, n):    
         x = random.choice(CONSONANTS)
         hand[x] = hand.get(x, 0) + 1
+
+    x = '*'
+    hand[x] = 1
     
     return hand
 
@@ -223,21 +226,42 @@ def is_valid_word(word, hand, word_list):
     word_list: list of lowercase strings
     returns: boolean
     """
-    lowercase_word = word.lower()
-    # Duplicates hand instead of only referencing to its dictionary object
-    # Copy hand so that it isn't modified
-    hand_copy = copy.deepcopy(hand) 
-    
-    if lowercase_word in word_list:
+    # Create copy of word with all letters in small caps
+    lowercase_word = word.lower()   
+    # Use deep copy to actually make a copy instead of only referencing to 
+    # same dictionary of hand variable(dictionary)
+    hand_copy = copy.deepcopy(hand)
+    possible_words = 0   
+
+    used_wildcard = lowercase_word.find('*')
+    # Cheks if '*' has been used. If used_wildcard's value isn't -1
+    if used_wildcard >= 0:
+        # Loop through the letters in VOWELS to check if there are possible valid words
+        # created when replacing a wildcard character with a vowel letter
+        for i in VOWELS:            
+            # Replace wildcard character('*') with a letter in VOWELS (using index i)
+            # and store it in test_word
+            test_word = lowercase_word.replace(lowercase_word[used_wildcard], i)
+            if test_word in word_list:
+                possible_words += 1
+                
+        # Checks if any possible words exist from those vowels
+        if possible_words > 0:
+            return True
+        else:
+            return False
+                  
+    # Check if word(in lowercase) is in word_list
+    elif lowercase_word in word_list:
         # Loops to check if all letters in lowercase_word are also in hand_copy
         for letter in lowercase_word:
             if letter not in hand_copy:
-                return False
+                return False            
             else:
                 hand_copy[letter] -= 1
-                if hand_copy[letter] <= 0: # Removes key if value is 0 or less
-                    del hand_copy[letter]
-            
+                if hand_copy[letter] == 0: # Removes key if value is 0 or less
+                    del hand_copy[letter]                   
+
         return True
     
     else:
@@ -255,7 +279,11 @@ def calculate_handlen(hand):
     returns: integer
     """
     
-    pass  # TO DO... Remove this line when you implement this function
+    length = 0
+    for i in hand:
+        length += hand[i]
+
+    return length
 
 def play_hand(hand, word_list):
 
@@ -287,8 +315,41 @@ def play_hand(hand, word_list):
       returns: the total score for the hand
       
     """
-    
-    # BEGIN PSEUDOCODE <-- Remove this comment when you implement this function
+    the_hand = hand
+    print()
+
+    total_score = 0
+    while calculate_handlen(the_hand) > 0:
+        print('Current Hand: ', end='')
+        display_hand(the_hand)
+        word = input('Enter word, or "!!" to indicate that you are finished: ')
+
+        if word == '!!':
+            break
+        
+        word_validation = is_valid_word(word, the_hand, word_list)
+        if word_validation == True:
+            word_score = get_word_score(word, calculate_handlen(the_hand))
+            total_score += word_score
+            print("\"" + word + "\"", 'earned', word_score,
+                  'points. Total:', total_score, 'points')
+            the_hand = update_hand(the_hand, word)
+        else:
+            print('That is not a valid word. Please choose another word.')
+            the_hand = update_hand(the_hand, word)
+
+        print()
+
+    if word == '!!':
+        print()
+        print('Total score:', total_score, 'points')
+    else:
+        print()
+        print('Ran out of letters. Total score:', total_score, 'points.')
+
+    return total_score
+        
+ 
     # Keep track of the total score
     
     # As long as there are still letters left in the hand:
@@ -353,8 +414,20 @@ def substitute_hand(hand, letter):
     letter: string
     returns: dictionary (string -> int)
     """
-    
-    pass  # TO DO... Remove this line when you implement this function
+
+    hand_copy = copy.deepcopy(hand)        
+    alphabet = VOWELS + CONSONANTS
+    new_letter = random.choice(alphabet)
+
+    # Loops until a random letter that isn't in the keys of the hand is found
+    while new_letter in hand:
+        new_letter = random.choice(alphabet)
+
+    # Replaces the chosen key with random new_letter key 
+    hand_copy[new_letter] = hand_copy[letter]
+    del hand_copy[letter]
+
+    return hand_copy
        
     
 def play_game(word_list):
@@ -387,16 +460,58 @@ def play_game(word_list):
 
     word_list: list of lowercase strings
     """
-    
-    print("play_game not implemented.") # TO DO... Remove this line when you implement this function
-    
+    print()
+    num_hands = int(input('Enter total number of hands: '))
+    print()
+    hand_substituted = False
+    replay_hand = False
+    looped = False
+    replay_played = False
 
+    over_all_score = 0
+    score_array = []
+
+    for i in range(num_hands):
+        hand = deal_hand(HAND_SIZE)
+        print('Current hand: ', end = '')
+        display_hand(hand)
+        
+        if hand_substituted == False:
+            substitute = input('Would you like to substitute a letter? ' )
+            if substitute.lower() == 'yes':
+                this_letter = input('Which letter would you like to replace? ')
+                hand = substitute_hand(hand, this_letter)
+                old_hand = copy.deepcopy(hand)
+                hand_substituted = True            
+        
+        if looped == True and replay_hand == False:
+            replay = input('Would you like to replay the hand? ')
+            if replay.lower() == 'yes':
+                hand = copy.deepcopy(old_hand)
+                h = i - 1
+                replay_hand = True
+              
+        hand_score = play_hand(hand, word_list)        
+        score_array.append(hand_score)            
+        
+        old_hand = copy.deepcopy(hand)
+        looped = True       
+        
+        print('----------')
+
+    score_array.remove(score_array[h+1]) if score_array[h] > score_array[h+1] else score_array.remove(score_array[h])
+
+    for i in score_array:
+        over_all_score += i
+    
+    print('Total score over all hands:', over_all_score)
 
 #
 # Build data structures used for entire session and play game
 # Do not remove the "if __name__ == '__main__':" line - this code is executed
 # when the program is run directly, instead of through an import statement
 #
-if __name__ == '__main__':
-    word_list = load_words()
-    play_game(word_list)
+
+if __name__ == "__main__":
+          word_list = load_words()
+          play_game(word_list)
