@@ -461,11 +461,10 @@ def play_game(word_list):
     hand_substituted = False
     replay_hand = False
     looped = False
-    replay_played = False
 
     over_all_score = 0
     score_array = []
-
+    
     for i in range(num_hands):
         hand = deal_hand(HAND_SIZE)
         print('Current hand: ', end = '')
@@ -479,7 +478,7 @@ def play_game(word_list):
                 old_hand = copy.deepcopy(hand)
                 hand_substituted = True            
         
-        if looped == True and replay_hand == False:
+        if i > 0 and replay_hand == False:
             replay = input('Would you like to replay the hand? ')
             if replay.lower() == 'yes':
                 hand = copy.deepcopy(old_hand)
@@ -487,10 +486,8 @@ def play_game(word_list):
                 replay_hand = True
               
         hand_score = play_hand(hand, word_list)        
-        score_array.append(hand_score)            
-        
-        old_hand = copy.deepcopy(hand)
-        looped = True       
+        score_array.append(hand_score)
+        old_hand = copy.deepcopy(hand)     
         
         print('----------')
 
