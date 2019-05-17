@@ -1,2 +1,2 @@
-# MIT-OCW-Assignments
-My code answers to MIT OCW Assignments/PSets
+# 6.0001 Assignment Solutions MIT OCW
+My code answers to 6.0001 Assignements
